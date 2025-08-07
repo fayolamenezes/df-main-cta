@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Falling Letters Into Button</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,500&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -19,29 +20,39 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      font-family: 'Inter', sans-serif;
+      font-family: "Inter", sans-serif;
       overflow: hidden;
     }
 
     .button-container {
+      --c: #343212; /* inner fill color */
+      --p: 10%;
+      --gradient-angle: 0deg;
+
       position: relative;
-      background-color: #343212;
-      border: 2px solid #ffb800;
-      box-shadow: 0 0 15px 3px #ffb80088;
-      border-radius: 999px;
-      padding: 1rem 2rem;
-      min-width: 300px;
-      height: 72px;
+      width: 17rem;
+      height: 4rem;
+      border-radius: 8rem;
+      background: linear-gradient(var(--c), var(--c)) padding-box,
+                  conic-gradient(
+                    from var(--gradient-angle),
+                    transparent,
+                    #ffb800 var(--p),
+                    transparent calc(var(--p) * 2)
+                  ) border-box;
+      border: 2px solid transparent;
       display: flex;
       justify-content: center;
       align-items: center;
-      overflow: visible;
+      cursor: pointer;
+      z-index: 1;
     }
 
     .letter-wrapper {
       display: flex;
       flex-wrap: nowrap;
       position: relative;
+      z-index: 2;
     }
 
     .letter {
@@ -51,7 +62,7 @@
       pointer-events: none;
       position: relative;
       display: inline-block;
-      visibility: hidden; /* Hide initially to prevent flash */
+      visibility: hidden;
     }
 
     .letter.space {
@@ -90,7 +101,6 @@
     const buttonTop = wrapper.getBoundingClientRect().top;
     const fallDistance = window.innerHeight - buttonTop - 40;
 
-    // Set initial random positions and make visible
     letters.forEach((letter) => {
       const startX = gsap.utils.random(-200, 200);
       const startY = gsap.utils.random(-300, -100);
@@ -102,7 +112,6 @@
       });
     });
 
-    // Animate all falling together
     gsap.to(letters, {
       y: fallDistance,
       x: (i) => `+=${gsap.utils.random(-70, 70)}`,
@@ -110,7 +119,6 @@
       duration: 1.2
     });
 
-    // Animate all returning together
     gsap.to(letters, {
       delay: 1.2,
       x: 0,
@@ -119,6 +127,16 @@
       duration: 1
     });
   }, 100);
+
+  // ✨ Conic gradient glow rotation
+  const btn = document.querySelector('.button-container');
+  let angle = 0;
+  function rotateGradient() {
+    angle = (angle + 1) % 360;
+    btn.style.setProperty('--gradient-angle', `${angle}deg`);
+    requestAnimationFrame(rotateGradient);
+  }
+  rotateGradient();
 </script>
 
 </body>
