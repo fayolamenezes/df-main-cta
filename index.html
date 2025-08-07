@@ -24,8 +24,36 @@
       overflow: hidden;
     }
 
+    .glow-wrapper {
+      position: relative;
+    }
+
+.glow {
+  --p: 10%;
+  --gradient-angle: 0deg;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1.1); /* reduced from 1.4 */
+  width: 17rem;
+  height: 4rem;
+  border-radius: 8rem;
+  background: conic-gradient(
+    from var(--gradient-angle),
+    transparent 0%,
+    #ffb800 var(--p),
+    transparent calc(var(--p) * 2)
+  );
+  filter: blur(6px); /* reduced from 12px */
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.6; /* optional: softens glow */
+}
+
+
     .button-container {
-      --c: #343212; /* inner fill color */
+      --c: #343212;
       --p: 10%;
       --gradient-angle: 0deg;
 
@@ -72,8 +100,11 @@
 </head>
 <body>
 
-<div class="button-container">
-  <div class="letter-wrapper" id="letterWrapper"></div>
+<div class="glow-wrapper">
+  <div class="glow" id="glowEffect"></div>
+  <div class="button-container" id="button">
+    <div class="letter-wrapper" id="letterWrapper"></div>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -128,12 +159,14 @@
     });
   }, 100);
 
-  // ✨ Conic gradient glow rotation
-  const btn = document.querySelector('.button-container');
+  // Rotate both button and glow
+  const glow = document.getElementById('glowEffect');
+  const button = document.getElementById('button');
   let angle = 0;
   function rotateGradient() {
     angle = (angle + 1) % 360;
-    btn.style.setProperty('--gradient-angle', `${angle}deg`);
+    glow.style.setProperty('--gradient-angle', `${angle}deg`);
+    button.style.setProperty('--gradient-angle', `${angle}deg`);
     requestAnimationFrame(rotateGradient);
   }
   rotateGradient();
