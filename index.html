@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Styled Falling Letters</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #0f0f0f;
+      background-image: radial-gradient(#333 1px, transparent 1px);
+      background-size: 20px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+    }
+
+    .button-container {
+      position: relative;
+      background-color: #343212;
+      border: 2px solid #ffb800;
+      box-shadow: 0 0 15px 3px #ffb80088;
+      border-radius: 999px;
+      padding: 1rem 2rem;
+      min-width: 400px;
+      height: 72px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: visible;
+    }
+
+    .letter {
+      position: absolute;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #f1f1f1;
+      white-space: pre;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="button-container" id="button"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+  const text = "Join the Free Beta";
+  const container = document.getElementById("button");
+  const letters = [];
+
+  const letterSpacing = 22; // fixed spacing for characters
+  let currentX = 0;
+
+  text.split("").forEach((char, i) => {
+    const span = document.createElement("span");
+    span.classList.add("letter");
+    span.textContent = char;
+
+    // Skip spacing for spaces but keep position
+    if (char === " ") {
+      currentX += letterSpacing;
+      return;
+    }
+
+    // Position inside button
+    const top = container.offsetHeight / 2 - 12;
+    span.style.left = `${currentX}px`;
+    span.style.top = `${top}px`;
+
+    container.appendChild(span);
+    letters.push(span);
+
+    // Start from random position above
+    const startX = gsap.utils.random(-200, 200);
+    const startY = gsap.utils.random(-200, -100);
+    const bounceY = window.innerHeight - container.getBoundingClientRect().top - 30;
+
+    // Initial transform
+    gsap.set(span, {
+      x: startX,
+      y: startY,
+    });
+
+    // Fall down
+    gsap.to(span, {
+      y: bounceY,
+      x: `+=${gsap.utils.random(-50, 50)}`,
+      duration: gsap.utils.random(0.8, 1.3),
+      ease: "bounce.out",
+      delay: i * 0.05
+    });
+
+    // Return to original position
+    gsap.to(span, {
+      x: 0,
+      y: 0,
+      duration: 1,
+      ease: "power3.inOut",
+      delay: 1.4 + i * 0.03
+    });
+
+    currentX += letterSpacing;
+  });
+</script>
+
+</body>
+</html>
